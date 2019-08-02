@@ -1,0 +1,31 @@
+stages:
+  - Plan
+  - Apply
+
+plan:
+  stage: Plan
+  image: hub.ucloudadmin.com/esl_ipdd/ucloud-shell:latest
+  script:
+    - terraform init
+    - terraform plan -out o.plan
+  tags:
+    - uaek
+  only:
+    - master
+  artifacts:
+    paths:
+      - o.plan
+    expire_in: 1 week
+
+apply:
+  stage: Apply
+  image: hub.ucloudadmin.com/esl_ipdd/ucloud-shell:latest
+  script:
+    - terraform apply o.plan
+  tags:
+    - uaek
+  only:
+    - master
+  when: manual
+  dependencies:
+    - plan
