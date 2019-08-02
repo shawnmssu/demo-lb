@@ -60,7 +60,7 @@ data "ucloud_images" "default" {
   availability_zone = var.zone
   name_regex        = "^lb-packets-transmit-test"
   image_type        = "custom"
-  most_recent       = true
+//  most_recent       = true
 }
 
 # Create web servers
