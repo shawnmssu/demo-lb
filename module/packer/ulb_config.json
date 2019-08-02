@@ -1,0 +1,38 @@
+{
+  "variables": {
+    "ucloud_public_key": "{{env `UCLOUD_PUBLIC_KEY`}}",
+    "ucloud_private_key": "{{env `UCLOUD_PRIVATE_KEY`}}",
+    "ucloud_project_id": "{{env `UCLOUD_PROJECT_ID`}}",
+    "lb_public_ip": "",
+    "image_name": "",
+    "source_image_id": "",
+    "region": "",
+    "zone": ""
+  },
+
+  "builders": [{
+    "type": "ucloud-uhost",
+    "public_key": "{{user `ucloud_public_key`}}",
+    "private_key": "{{user `ucloud_private_key`}}",
+    "project_id": "{{user `ucloud_project_id`}}",
+    "region": "{{user `region`}}",
+    "availability_zone": "{{user `zone`}}",
+    "instance_type": "n-basic-2",
+    "source_image_id": "{{user `source_image_id`}}",
+    "ssh_username":"root",
+    "image_name": "{{user `image_name`}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "touch /etc/sysconfig/network-scripts/ifcfg-lo:1",
+      "echo 'DEVICE=lo:1\nIPADDR={{user `lb_public_ip`}}\nNETMASK=255.255.255.255' >> /etc/sysconfig/network-scripts/ifcfg-lo:1",
+      "ifup lo:1",
+      "yum install -y nginx",
+      "systemctl enable nginx",
+      "yum install -y nc"
+    ]
+  }]
+}
+
